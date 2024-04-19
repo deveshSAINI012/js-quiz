@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Quiz</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f6f6f6;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    #quiz-container {
+        max-width: 600px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+    }
+
+    h2 {
+        font-size: 24px;
+        margin-top: 0;
+        color: #333333;
+    }
+
+    .option {
+        background-color: #ff9800;
+        color: #ffffff;
+        padding: 15px 20px;
+        border-radius: 5px;
+        margin-top: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .option:hover {
+        background-color: #f57c00;
+    }
+
+    #submit-btn {
+        background-color: #ff5722;
+        color: #ffffff;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 20px;
+        font-size: 18px;
+        transition: background-color 0.3s ease;
+    }
+
+    #submit-btn:hover {
+        background-color: #e64a19;
+    }
+
+    #result {
+        font-weight: bold;
+        margin-top: 20px;
+        font-size: 20px;
+    }
+
+    #score {
+        margin-top: 20px;
+        font-size: 18px;
+    }
+
+    .correct {
+        color: #34a853;
+    }
+
+    .incorrect {
+        color: #e53935;
+    }
+</style>
+</head>
+<body>
+
+<div id="quiz-container">
+    <h2 id="question">Question</h2>
+    <div id="options">
+    </div>
+    <button id="submit-btn">Submit Answer</button>
+    <p id="result"></p>
+    <p id="score">Score: 0 / 5</p>
+</div>
+
+<script>
+const quizData = [
+    {
+        question: "What is the capital of Australia?",
+        options: ["Sydney", "Canberra", "Melbourne", "Brisbane"],
+        answer: "Canberra"
+    },
+    {
+        question: "Who wrote 'To Kill a Mockingbird'?",
+        options: ["Ernest Hemingway", "J.K. Rowling", "Harper Lee", "Stephen King"],
+        answer: "Harper Lee"
+    },
+    {
+        question: "What is the chemical symbol for silver?",
+        options: ["Si", "Ag", "Sl", "Sv"],
+        answer: "Ag"
+    },
+    {
+        question: "Which planet is known as the 'Red Planet'?",
+        options: ["Venus", "Mars", "Jupiter", "Saturn"],
+        answer: "Mars"
+    },
+    {
+        question: "Who painted the 'Starry Night'?",
+        options: ["Vincent van Gogh", "Pablo Picasso", "Leonardo da Vinci", "Claude Monet"],
+        answer: "Vincent van Gogh"
+    }
+];
+
+const quizContainer = document.getElementById('quiz-container');
+const questionElement = document.getElementById('question');
+const optionsElement = document.getElementById('options');
+const submitBtn = document.getElementById('submit-btn');
+const resultElement = document.getElementById('result');
+const scoreElement = document.getElementById('score');
+
+let currentQuestionIndex = 0;
+let score = 0;
+let userAnswers = [];
+
+function loadQuestion() {
+    const currentQuestion = quizData[currentQuestionIndex];
+    questionElement.textContent = currentQuestion.question;
+    optionsElement.innerHTML = '';
+
+    currentQuestion.options.forEach((option, index) => {
+        const optionElement = document.createElement('div');
+        optionElement.classList.add('option');
+        optionElement.textContent = option;
+        optionElement.addEventListener('click', () => selectAnswer(option));
+        optionsElement.appendChild(optionElement);
+    });
+}
+
+function selectAnswer(selectedOption) {
+    const currentQuestion = quizData[currentQuestionIndex];
+    userAnswers.push(selectedOption);
+    if (selectedOption === currentQuestion.answer) {
+        resultElement.textContent = 'Correct!';
+        resultElement.classList.add('correct');
+        score++;
+    } else {
+        resultElement.textContent = 'Incorrect!';
+        resultElement.classList.add('incorrect');
+    }
+    scoreElement.textContent = `Score: ${score} / 5`;
+    submitBtn.disabled = true;
+    nextQuestion();
+}
+
+function nextQuestion() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < quizData.length) {
+        loadQuestion();
+        resultElement.textContent = '';
+        resultElement.classList.remove('correct', 'incorrect');
+        submitBtn.disabled = false;
+    } else {
+        endQuiz();
+    }
+}
+
+function endQuiz() {
+    let resultsHTML = "<h2>Results</h2>";
+    quizData.forEach((question, index) => {
+        resultsHTML += `<p>Question ${index + 1}: ${question.question}</p>
+                        <p>Correct Answer: ${question.answer}</p>
+                        <p>Your Answer: <span class="${question.answer === userAnswers[index] ? 'correct' : 'incorrect'}">${userAnswers[index]}</span></p>`;
+    });
+    quizContainer.innerHTML = resultsHTML;
+}
+
+submitBtn.addEventListener('click', nextQuestion);
+
+loadQuestion();
+</script>
+
+</body>
+</html>
